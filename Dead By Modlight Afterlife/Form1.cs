@@ -103,8 +103,11 @@ namespace Dead_By_Modlight_Afterlife
             FiddlerCore.Start();
             textBox2.ReadOnly = true;
             button4.Enabled = false;
-            button4.BackColor = System.Drawing.Color.SeaGreen; 
+            button4.BackColor = System.Drawing.Color.MediumSpringGreen; 
             button4.Text = "WORKING...";
+            button5.Visible = true;
         }
+
+        private void button5_Click(object sender, EventArgs e) => System.Diagnostics.Process.Start(textBox1.Text, "-eac-nop-loaded");
     }
 }
