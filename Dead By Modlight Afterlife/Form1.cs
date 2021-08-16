@@ -11,6 +11,7 @@ namespace Dead_By_Modlight_Afterlife
         ///////////////////////////////// => High priority variables
         protected static string ProgramExecutable = System.AppDomain.CurrentDomain.FriendlyName;
         protected const string REGISTRY_MAIN = @"HKEY_CURRENT_USER\SOFTWARE\Dead By Modlight Afterlife";
+        protected const string OFFLINEVERSION = "1001";
 
         ///////////////////////////////// => High priority actions
         protected override void WndProc(ref Message win)
@@ -29,6 +30,8 @@ namespace Dead_By_Modlight_Afterlife
         private void Form1_Load(object sender, EventArgs e)
         {
             REGISTRYCHANGER_VERIFYVALUES();
+            NETSC_AVAILABILITYCHECK();
+            NETSC_VERSIONCHECK();
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -57,14 +60,43 @@ namespace Dead_By_Modlight_Afterlife
             if (REGISTRYVALUE_GAMEEXEPATH != "NONE")
             {
                 textBox1.Text = REGISTRYVALUE_GAMEEXEPATH;
-                //label2.Visible = true;
                 textBox2.Visible = true;
             }
         }
 
-        ///////////////////////////////// => Web Services
-        
+        ///////////////////////////////// => Net Services
+        private void NETSC_AVAILABILITYCHECK()
+        {
+            string availabilityResponse = NetServices.REQUEST_GET("http://api.cranchpalace.info/v1/deadbymodlight/afterlife/availabilityCheck", "");
+            if (availabilityResponse == "ERROR")
+                return;
 
+            var availabilityJsonResponse = Newtonsoft.Json.Linq.JObject.Parse(availabilityResponse);
+            if ((bool)availabilityJsonResponse["isAlive"] == false)
+            {
+                MessageBox.Show("Modding wasn't available at current moment, possible reasons is technical work or it was patched.", ProgramExecutable, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                this.Close();
+            } else {
+                Globals.moddingFiles = (string)availabilityJsonResponse["downloadLink"];
+                button6.Visible = true;
+            }
+        }
+        private void NETSC_VERSIONCHECK()
+        {
+            string versionResponse = NetServices.REQUEST_GET("http://api.cranchpalace.info/v1/deadbymodlight/afterlife/versionCheck", $"version={OFFLINEVERSION}");
+            if (versionResponse == "ERROR")
+                return;
+
+            var versionJsonResponse = Newtonsoft.Json.Linq.JObject.Parse(versionResponse);
+            if((bool)versionJsonResponse["isValid"] == false)
+            {
+                DialogResult isUserAgreeWithUpdate = MessageBox.Show("New Version is out, would you like to update?", ProgramExecutable, MessageBoxButtons.OKCancel, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                if (isUserAgreeWithUpdate == DialogResult.OK) {
+                    System.Diagnostics.Process.Start((string)versionJsonResponse["downloadLink"]);
+                    this.Close();
+                }
+            }
+        }
 
         ///////////////////////////////// => Main()
         private void button3_Click(object sender, EventArgs e)
@@ -109,5 +141,6 @@ namespace Dead_By_Modlight_Afterlife
         }
 
         private void button5_Click(object sender, EventArgs e) => System.Diagnostics.Process.Start(textBox1.Text, "-eac-nop-loaded");
+        private void button6_Click(object sender, EventArgs e) => System.Diagnostics.Process.Start(Globals.moddingFiles);
     }
 }

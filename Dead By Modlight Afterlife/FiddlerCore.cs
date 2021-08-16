@@ -7,7 +7,6 @@ namespace Dead_By_Modlight_Afterlife
         static FiddlerCore()
         {
             FiddlerApplication.BeforeRequest += FiddlerToCatchBeforeRequest;
-            //FiddlerApplication.BeforeResponse += FiddlerToCatchBeforeResponse; ==> Unused for now
         }
         private static bool EnsureRootCertificate()
         {
@@ -53,10 +52,5 @@ namespace Dead_By_Modlight_Afterlife
                 oSession.utilSetResponseBody("{\"valid\":true,\"stateUpdated\":true}");
             }
         }
-
-        //public static void FiddlerToCatchBeforeResponse(Session oSession)
-        //{
-        //    
-        //}
     }
 }

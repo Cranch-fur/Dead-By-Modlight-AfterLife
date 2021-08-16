@@ -42,6 +42,10 @@
     <Reference Include="FiddlerCore">
       <HintPath>..\..\Cursed Fiddler\Cursed Fiddler\bin\Debug\FiddlerCore.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -96,13 +100,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\IMG_PNG_VERSION.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\IMG_PNG_LOGO.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="DBM-Logo.ico" />
+    <None Include="Resources\IMG_PNG_VERSION.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

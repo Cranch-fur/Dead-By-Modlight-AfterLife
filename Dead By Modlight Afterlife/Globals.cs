@@ -5,6 +5,9 @@
         // => SteamAuth response temp file location
         public static string responseFile = System.IO.Path.GetTempPath() + "\\AuthResponse.txt";
 
+        // => DownloadLink to Modding Files, specifed from web request
+        public static string moddingFiles = "";
+
         // => DebugMode
         public static bool isDebugMode = false;
     }
