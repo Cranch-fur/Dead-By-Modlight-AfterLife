@@ -11,7 +11,8 @@ namespace Dead_By_Modlight_Afterlife
         ///////////////////////////////// => High priority variables
         protected static string ProgramExecutable = System.AppDomain.CurrentDomain.FriendlyName;
         protected const string REGISTRY_MAIN = @"HKEY_CURRENT_USER\SOFTWARE\Dead By Modlight Afterlife";
-        protected const string OFFLINEVERSION = "1001";
+        protected const string OFFLINEVERSION = "1002";
+        private string STOREDVALUE_STEAMAUTH = "NULL";
 
         ///////////////////////////////// => High priority actions
         protected override void WndProc(ref Message win)
@@ -32,6 +33,13 @@ namespace Dead_By_Modlight_Afterlife
             REGISTRYCHANGER_VERIFYVALUES();
             NETSC_AVAILABILITYCHECK();
             NETSC_VERSIONCHECK();
+            if ((Int32)(DateTime.Now.Subtract(File.GetLastWriteTime(Globals.responseFile)).TotalHours) < 16)
+            {
+                STOREDVALUE_STEAMAUTH = File.ReadAllText(Globals.responseFile);
+                textBox2.Text = STOREDVALUE_STEAMAUTH;
+            }
+
+
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -53,15 +61,16 @@ namespace Dead_By_Modlight_Afterlife
         ///////////////////////////////// => Registry
         private void REGISTRYCHANGER_VERIFYVALUES()
         {
-            string REGISTRYVALUE_GAMEEXEPATH = Registry.GetValue(REGISTRY_MAIN, "GameExecutablePath", "NONE").ToString();
-
-
-
-            if (REGISTRYVALUE_GAMEEXEPATH != "NONE")
+            try
             {
-                textBox1.Text = REGISTRYVALUE_GAMEEXEPATH;
-                textBox2.Visible = true;
-            }
+                string REGISTRYVALUE_GAMEEXEPATH = Registry.GetValue(REGISTRY_MAIN, "GameExecutablePath", "NONE").ToString();
+                if (REGISTRYVALUE_GAMEEXEPATH != "NONE")
+                {
+                    textBox1.Text = REGISTRYVALUE_GAMEEXEPATH;
+                    textBox2.Visible = true;
+                }
+            } 
+            catch { return; }
         }
 
         ///////////////////////////////// => Net Services
@@ -126,10 +135,13 @@ namespace Dead_By_Modlight_Afterlife
                 return;
             }
 
-            using (StreamWriter SW = new StreamWriter(Globals.responseFile, false, System.Text.Encoding.ASCII))
+            if (textBox2.Text != STOREDVALUE_STEAMAUTH)
             {
-                SW.Write(textBox2.Text);
-                SW.Flush();
+                using (StreamWriter SW = new StreamWriter(Globals.responseFile, false, System.Text.Encoding.ASCII))
+                {
+                    SW.Write(textBox2.Text);
+                    SW.Flush();
+                }
             }
 
             FiddlerCore.Start();

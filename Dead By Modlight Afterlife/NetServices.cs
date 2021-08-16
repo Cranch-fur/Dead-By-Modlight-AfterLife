@@ -23,10 +23,7 @@ namespace Dead_By_Modlight_Afterlife
                     return reader.ReadToEnd();
                 }
             }
-            catch (WebException ex)
-            {
-                return "ERROR";
-            }
+            catch { return "ERROR"; }
         }
     }
 }

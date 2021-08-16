@@ -10,5 +10,6 @@
 
         // => DebugMode
         public static bool isDebugMode = false;
+
     }
 }
